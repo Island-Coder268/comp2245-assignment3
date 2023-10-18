@@ -1,57 +1,69 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const squares = document.querySelectorAll('#board div');
-    const status = document.getElementById('status');
-    let currentPlayer = 'X';
-    let moves = 0;  // To keep track of the number of moves made.
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // Initial board setup
+    let squares = document.querySelectorAll("#board div");
+    squares.forEach(function(square) {
+        square.classList.add("square");
+    });
 
-    const winningCombinations = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
+    // Variables to manage the game state
+    let currentPlayer = "X";
+    let boardState = Array(9).fill(""); // 3x3 board represented as 1D array
 
-    squares.forEach(square => {
-        // Add the basic 'square' class to style each square
-        square.classList.add('square');
+    // Function to check for a winning move
+    function checkWinner(player) {
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+        return winningCombinations.some(combination => {
+            return combination.every(index => {
+                return boardState[index] === player;
+            });
+        });
+    }
 
-        // Click event listener to add X or O
-        square.addEventListener('click', function() {
-            if (!square.textContent) {
+    // Event listener to handle moves
+    squares.forEach(function(square, index) {
+        square.addEventListener("click", function() {
+            if (!square.classList.contains("X") && !square.classList.contains("O")) {
                 square.textContent = currentPlayer;
                 square.classList.add(currentPlayer);
-                moves++;
-
+                boardState[index] = currentPlayer;
                 if (checkWinner(currentPlayer)) {
+                    const status = document.getElementById("status");
                     status.textContent = `Congratulations! ${currentPlayer} is the Winner!`;
-                    status.classList.add('you-won');
-                } else if (moves === 9) {
-                    status.textContent = "It's a Tie!";
+                    status.classList.add("you-won");
                 } else {
-                    // Switch to the other player for the next turn
-                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
                 }
             }
         });
 
-        // Mouseover event listener to show the hover effect
-        square.addEventListener('mouseover', function() {
-            square.classList.add('hover');
+        // Add hover effect
+        square.addEventListener("mouseover", function() {
+            square.classList.add("hover");
         });
-
-        // Mouseout event listener to remove the hover effect
-        square.addEventListener('mouseout', function() {
-            square.classList.remove('hover');
+        square.addEventListener("mouseout", function() {
+            square.classList.remove("hover");
         });
     });
 
-    function checkWinner(player) {
-        return winningCombinations.some(combination => {
-            return combination.every(index => squares[index].textContent === player);
+    // New Game button logic
+    let newGameBtn = document.querySelector(".btn");
+    let status = document.getElementById("status");
+
+    newGameBtn.addEventListener("click", function() {
+        squares.forEach(function(square) {
+            square.textContent = "";
+            square.classList.remove("X", "O");
         });
-    }
+
+        status.textContent = "Move your mouse over a square and click to play an X or an O.";
+        status.classList.remove("you-won");
+
+        boardState.fill("");
+        currentPlayer = "X";
+    });
 });
