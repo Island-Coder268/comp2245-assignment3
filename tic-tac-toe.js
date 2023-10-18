@@ -1,34 +1,33 @@
-// Wait for the document to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Select all the divs inside the game board (with the ID "board")
-    let squares = document.querySelectorAll('#board > div');
-    
-    // Define a variable to track the current player. Start with 'X'
+    const squares = document.querySelectorAll('#board div');
     let currentPlayer = 'X';
 
-    // Define an empty array to keep track of the game state
-    let gameState = ['', '', '', '', '', '', '', '', ''];
-
-    // Loop through each square
     squares.forEach(function(square, index) {
+        // Add the basic 'square' class to style each square
         square.classList.add('square');
 
-        // Add a click event listener to each square
+        // Click event listener to add X or O
         square.addEventListener('click', function() {
-            // Check if the square is already occupied. If not, then proceed
+            // If the square is empty, put either X or O
             if (square.textContent === '') {
-                // Set the content of the square to the current player (either 'X' or 'O')
                 square.textContent = currentPlayer;
-
-                // Add the class 'X' or 'O' for styling
                 square.classList.add(currentPlayer);
 
-                // Update the game state
-                gameState[index] = currentPlayer;
-
-                // Switch the current player for the next turn
+                // Switch to the other player for the next turn
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             }
+        });
+
+        // Mouseover event listener to show the hover effect
+        square.addEventListener('mouseover', function() {
+            if (square.textContent === '') {
+                square.classList.add('hover');
+            }
+        });
+
+        // Mouseout event listener to remove the hover effect
+        square.addEventListener('mouseout', function() {
+            square.classList.remove('hover');
         });
     });
 });
